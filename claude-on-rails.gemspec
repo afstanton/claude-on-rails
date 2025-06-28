@@ -5,14 +5,14 @@ require_relative 'lib/claude_on_rails/version'
 Gem::Specification.new do |spec|
   spec.name = 'claude-on-rails'
   spec.version = ClaudeOnRails::VERSION
-  spec.authors = ['Obie Fernandez']
-  spec.email = ['obiefernandez@gmail.com']
+  spec.authors = ['Obie Fernandez', 'Aaron F Stanton']
+  spec.email = ['obiefernandez@gmail.com', 'afstanton@gmail.com']
 
   spec.summary = 'Rails development framework powered by Claude swarm intelligence'
   spec.description = 'ClaudeOnRails leverages claude-swarm to create an intelligent team of AI agents ' \
                      'specialized in different aspects of Rails development. Simply describe what you want to build, ' \
                      'and the swarm handles the rest.'
-  spec.homepage = 'https://github.com/obie/claude-on-rails'
+  spec.homepage = 'https://github.com/afstanton/claude-on-rails'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 3.3.0'
 

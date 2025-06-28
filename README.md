@@ -1,3 +1,7 @@
+# FORK
+
+This is a fork of [claude-on-rails](https://github.com/obie/claude-on-rails), created with the intent of decoupling this from Claude.ai.
+
 # ClaudeOnRails
 
 [![Gem Version](https://badge.fury.io/rb/claude-on-rails.svg?cache_bust=0.1.4)](https://badge.fury.io/rb/claude-on-rails)
