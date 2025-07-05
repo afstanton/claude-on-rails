@@ -43,11 +43,16 @@ bundle install
 rails generate claude_on_rails:swarm
 ```
 
+During generation, you'll be offered to set up Rails MCP Server for enhanced documentation access. Simply press Y when prompted!
+
 This will:
 - Analyze your Rails project structure
+- Optionally set up Rails MCP Server (recommended)
 - Generate a customized swarm configuration
 - Create agent-specific prompts
 - Set up your development environment
+
+For detailed setup instructions, see [SETUP.md](./SETUP.md).
 
 ## Usage
 
@@ -159,6 +164,47 @@ Customize agent behavior by editing prompts in `.claude-on-rails/prompts/`:
 - **Test-Driven**: Automatic test generation for all code
 - **Performance Focus**: Built-in optimization capabilities
 
+## Enhanced Documentation with Rails MCP Server
+
+ClaudeOnRails integrates with [Rails MCP Server](https://github.com/maquina-app/rails-mcp-server) to provide your AI agents with real-time access to Rails documentation and best practices.
+
+### Benefits
+
+- **Up-to-date Documentation**: Agents access current Rails guides matching your version
+- **Framework Resources**: Includes Turbo, Stimulus, and Kamal documentation
+- **Consistent Standards**: All agents share the same documentation source
+- **Reduced Hallucination**: Agents verify patterns against official documentation
+
+### Automated Setup
+
+When you run `rails generate claude_on_rails:swarm`, you'll be prompted to set up Rails MCP Server automatically. Just press Y!
+
+If you skipped it initially, you can set it up anytime:
+
+```bash
+bundle exec rake claude_on_rails:setup_mcp
+```
+
+This interactive command will:
+- Install the Rails MCP Server gem
+- Configure your environment for enhanced documentation access
+
+### Check Status
+
+To verify your Rails MCP Server installation:
+
+```bash
+bundle exec rake claude_on_rails:mcp_status
+```
+
+### How It Works
+
+When Rails MCP Server is available:
+- Each agent can query Rails documentation in real-time
+- Version-specific guidance ensures compatibility
+- Agents reference canonical implementations
+- Complex features follow official patterns
+
 ## Requirements
 
 - Ruby 2.7+
@@ -186,4 +232,4 @@ MIT License - see [LICENSE](./LICENSE) for details.
 
 - Powered by [claude-swarm](https://github.com/parruda/claude-swarm)
 - Built for [Claude Code](https://github.com/anthropics/claude-code)
-- Integrates with [Rails MCP Server](https://github.com/mariochavez/rails-mcp-server)
+- Integrates with [Rails MCP Server](https://github.com/maquina-app/rails-mcp-server)

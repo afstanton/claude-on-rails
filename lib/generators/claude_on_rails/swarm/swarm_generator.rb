@@ -20,6 +20,12 @@ module ClaudeOnRails
       class_option :turbo, type: :boolean, default: true,
                            desc: 'Include Turbo/Stimulus specialist agents'
 
+      class_option :mcp_server, type: :boolean, default: true,
+                                desc: 'Include Rails MCP Server for enhanced documentation access'
+
+      class_option :dev_mcp, type: :boolean, default: true,
+                             desc: 'Include Rails Dev MCP Server for development server management'
+
       def analyze_project
         say 'Analyzing Rails project structure...', :green
         @project_analysis = ClaudeOnRails.analyze_project(Rails.root)
@@ -31,9 +37,20 @@ module ClaudeOnRails
         @skip_tests = options[:skip_tests]
         @test_framework = @project_analysis[:test_framework]
 
+        # Check for Rails MCP Server
+        @include_mcp_server = options[:mcp_server] && ClaudeOnRails::MCPSupport.available?
+
+        # Check for Rails Dev MCP
+        @include_dev_mcp = options[:dev_mcp] && check_rails_dev_mcp_availability
+
         say "Project type: #{@api_only ? 'API-only' : 'Full-stack Rails'}", :cyan
         say "Test framework: #{@test_framework}", :cyan if @test_framework
         say "GraphQL detected: #{@has_graphql ? 'Yes' : 'No'}", :cyan
+        say "Rails MCP Server: #{@include_mcp_server ? 'Available' : 'Not available'}", :cyan
+        say "Rails Dev MCP: #{@include_dev_mcp ? 'Available' : 'Not available'}", :cyan
+
+        # Offer MCP setup if enabled but not available
+        offer_mcp_setup if options[:mcp_server] && !@include_mcp_server
 
         # Show which agents will be created
         say "\nAgents to be created:", :yellow
@@ -72,17 +89,40 @@ module ClaudeOnRails
 
       def create_agent_prompts
         say 'Setting up agent-specific prompts...', :green
-        directory 'prompts', '.claude-on-rails/prompts'
+
+        dest_dir = '.claude-on-rails/prompts'
+        empty_directory dest_dir
+
+        Dir[File.join(self.class.source_root, 'prompts', '*')].each do |source_path|
+          filename = File.basename(source_path)
+          relative_source = File.join('prompts', filename)
+          destination_filename = filename.sub(/\.erb\z/, '')
+          destination_path = File.join(dest_dir, destination_filename)
+
+          if filename.end_with?('.erb')
+            template relative_source, destination_path
+          else
+            copy_file relative_source, destination_path
+          end
+        end
       end
 
       def update_gitignore
         say 'Updating .gitignore...', :green
+        gitignore_path = Rails.root.join('.gitignore')
+
+        # Create .gitignore if it doesn't exist
+        create_file '.gitignore', '' unless File.exist?(gitignore_path)
+
         append_to_file '.gitignore', "\n# ClaudeOnRails\n.claude-on-rails/sessions/\n.claude-swarm/\nclaude-swarm.log\n"
       end
 
       def display_next_steps
         say "\n✅ ClaudeOnRails swarm configuration created!", :green
         say "\nNext steps:", :yellow
+
+        # Remove this section since we now handle it interactively in analyze_project
+
         say '1. Review and customize claude-swarm.yml for your project'
         say '2. Start your Rails development swarm:'
         say '   claude-swarm', :cyan
@@ -119,6 +159,34 @@ module ClaudeOnRails
 
         list << 'devops' if File.directory?(Rails.root.join('config'))
         list
+      end
+
+      def offer_mcp_setup
+        say "\n🎯 Rails MCP Server Enhancement Available!", :yellow
+        say "Rails MCP Server provides your AI agents with real-time Rails documentation.", :cyan
+
+        if yes?("Would you like to set it up now? (Y/n)", :green)
+          say "\nStarting Rails MCP Server setup...", :green
+          system('bundle exec rake claude_on_rails:setup_mcp')
+
+          # Re-check availability after setup
+          @include_mcp_server = ClaudeOnRails::MCPSupport.available?
+
+          if @include_mcp_server
+            say "\n✓ Rails MCP Server is now available!", :green
+          else
+            say "\nSetup was not completed. Continuing without MCP Server.", :yellow
+          end
+        else
+          say "\nYou can set it up later with: bundle exec rake claude_on_rails:setup_mcp", :cyan
+        end
+      end
+
+      def check_rails_dev_mcp_availability
+        system('gem list -i rails-dev-mcp > /dev/null 2>&1') ||
+          system('which rails-dev-mcp > /dev/null 2>&1')
+      rescue StandardError
+        false
       end
     end
   end

@@ -38,6 +38,30 @@ Always ensure:
 - Security by default
 - Performance considerations
 
+## Enhanced Documentation Access
+
+When Rails MCP Server is available, you have access to:
+- **Real-time Rails documentation**: Query official Rails guides and API docs
+- **Framework-specific resources**: Access Turbo, Stimulus, and Kamal documentation
+- **Version-aware guidance**: Get documentation matching the project's Rails version
+- **Best practices examples**: Reference canonical implementations
+
+Use MCP tools to:
+- Verify Rails conventions before implementing features
+- Check latest API methods and their parameters
+- Reference security best practices from official guides
+- Ensure compatibility with the project's Rails version
+
+## Development Server Management
+
+When Rails Dev MCP Server is available, you can:
+- **Start the server**: Use `start_dev_server` to run the Rails app
+- **Monitor logs**: Use `dev_server_logs` to check for errors or issues
+- **Check status**: Use `dev_server_status` to verify the server is running
+- **Stop the server**: Use `stop_dev_server` when done
+
+This enables real-time testing and debugging of implementations.
+
 ## Communication Style
 
 - Be clear and specific when delegating to specialists
